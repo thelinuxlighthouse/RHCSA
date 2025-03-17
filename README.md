@@ -32,7 +32,7 @@ This repository is a **comprehensive study guide** for the **Red Hat Certified S
 1. **Clone the repository**  
    ```bash
    git clone https://github.com/thelinuxlighthouse/RHCSA.git
-   cd rhcsa-study-guide
+   cd RHCSA
 2. Browse the summaries by topic.
 3. Follow the hands-on exercises to reinforce learning.
 4. Contribute! Found an error or want to add insights? Pull requests are welcome.
