@@ -1,5 +1,6 @@
 # RHCSA
 RHCSA Exam Preparation – Summaries &amp; Study Notes
+This repository contains structured summaries, study notes, and key takeaways for the Red Hat Certified System Administrator (RHCSA) exam. It serves as a reference guide for anyone preparing for RHCSA by breaking down essential topics, concepts, and hands-on exercises in an easy-to-follow format.
 # RHCSA Exam Preparation – Summaries & Study Notes
 
 ## 📌 About This Repository
