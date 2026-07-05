@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RHCSA EX200K - Chapter 12: Advanced Text Processing, Filtering, and Regular Expressions</title>
+<style>
+:root{--bg:#ffffff;--bg2:#f8f9fa;--bg3:#e9ecef;--text:#212529;--text2:#495057;--accent:#0066cc;--accent2:#004d99;--border:#dee2e6;--code:#f1f3f5;--success:#28a745;--warning:#ffc107;--danger:#dc3545;--info:#17a2b8;--card-shadow:0 2px 8px rgba(0,0,0,.08);--radius:8px;--code-bg:#1e1e1e;--code-text:#d4d4d4;--code-keyword:#569cd6;--code-string:#ce9178;--code-comment:#6a9955;--code-type:#4ec9b0;--code-number:#b5cea8;--code-func:#dcdcaa;--regex-bg:#f3e5f5;--regex-border:#8e24aa;--pattern-bg:#e8eaf6;--pattern-border:#3f51b5;--example-bg:#e8f5e9;--example-border:#43a047;--output-bg:#263238;--output-text:#a5d6a7;--cmd-bg:#1a237e;--cmd-text:#90caf9;--explain-bg:#fff3e0;--explain-border:#fb8c00;--tip-bg:#e3f2fd;--tip-border:#1e88e5;--scenario-bg:#e0f2f1;--scenario-border:#00897b}
+[data-theme="dark"]{--bg:#1a1a2e;--bg2:#16213e;--bg3:#0f3460;--text:#e4e6eb;--text2:#b0b3b8;--accent:#4dabf7;--accent2:#74c0fc;--border:#3d4450;--code:#2d333b;--card-shadow:0 2px 8px rgba(0,0,0,.3);--example-bg:#0a2a0a;--example-border:#1b5e20;--output-bg:#1a2a1a;--output-text:#69db7c;--cmd-bg:#0a1a3a;--cmd-text:#64b5f6;--explain-bg:#2a1a0a;--explain-border:#e65100;--tip-bg:#0a1a2a;--tip-border:#0d47a1;--regex-bg:#1a0a2a;--regex-border:#4a148c;--pattern-bg:#0a0a2a;--pattern-border:#283593;--scenario-bg:#0a2a2a;--scenario-border:#004d40}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;transition:background .3s,color .3s}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:1000px;margin:0 auto;padding:0 20px}
+.chapter-header{background:linear-gradient(135deg,#0066cc 0%,#003d7a 50%,#00264d 100%);color:#fff;padding:40px 20px;position:relative;overflow:hidden}
+.chapter-header::before{content:"";position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,.04) 0%,transparent 60%)}
+.chapter-header h1{font-size:2em;font-weight:800;position:relative;text-shadow:0 2px 4px rgba(0,0,0,.3)}
+.chapter-header .chapter-sub{font-size:1.1em;opacity:.85;margin-top:6px;font-weight:300;position:relative}
+.chapter-header .chapter-badge{display:inline-block;background:#cc0000;color:#fff;padding:4px 14px;border-radius:16px;font-size:.8em;font-weight:700;margin-top:10px;letter-spacing:.5px;position:relative}
+.topnav{position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;box-shadow:var(--card-shadow)}
+.topnav-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.topnav-links{display:flex;gap:4px;flex-wrap:wrap;padding:8px 0}
+.topnav-links a{padding:5px 12px;border-radius:16px;font-size:.82em;color:var(--text2);transition:all .2s;white-space:nowrap}
+.topnav-links a:hover{background:var(--accent);color:#fff;text-decoration:none}
+.theme-toggle{background:none;border:2px solid var(--border);border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:1.1em;display:flex;align-items:center;justify-content:center;transition:all .2s;color:var(--text)}
+.theme-toggle:hover{border-color:var(--accent)}
+.section{padding:36px 20px}
+.section:nth-child(even){background:var(--bg2)}
+.section h2{font-size:1.5em;margin-bottom:16px;padding-bottom:8px;border-bottom:3px solid var(--accent);color:var(--accent)}
+.section h3{font-size:1.2em;margin:20px 0 10px;color:var(--text)}
+.section h4{font-size:1.05em;margin:16px 0 8px;color:var(--text)}
+.section p{margin-bottom:10px;color:var(--text2)}
+.section ul,.section ol{padding-left:22px;margin-bottom:12px}
+.section li{margin-bottom:4px;color:var(--text2)}
+pre{background:var(--code-bg);color:var(--code-text);padding:16px;border-radius:var(--radius);overflow-x:auto;margin:12px 0;font-size:.86em;line-height:1.65;font-family:"Fira Code","Cascadia Code","Consolas","Courier New",monospace;position:relative}
+code{background:var(--code);padding:2px 6px;border-radius:4px;font-size:.86em;font-family:"Fira Code","Cascadia Code","Consolas","Courier New",monospace;color:var(--accent)}
+pre code{background:none;padding:0;color:inherit}
+.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2);padding:4px 10px;border-radius:4px;font-size:.75em;cursor:pointer;transition:all .2s;display:none}
+pre:hover .copy-btn{display:block}
+.copy-btn:hover{background:rgba(255,255,255,.3)}
+.kw{color:var(--code-keyword)}.str{color:var(--code-string)}.cmt{color:var(--code-comment)}.typ{color:var(--code-type)}.num{color:var(--code-number)}.fn{color:var(--code-func)}
+.obj-box{border-left:4px solid var(--accent);background:var(--bg2);padding:16px 20px;border-radius:0 var(--radius) var(--radius) 0;margin:16px 0}
+.exam-box{border-left:4px solid var(--warning);background:#fff3cd;padding:16px 20px;border-radius:0 var(--radius) var(--radius) 0;margin:16px 0;color:#856404}
+[data-theme="dark"] .exam-box{background:#3d3200;color:#ffd43b}
+.tip-box{border-left:4px solid var(--success);background:#d4edda;padding:16px 20px;border-radius:0 var(--radius) var(--radius) 0;margin:16px 0;color:#155724}
+[data-theme="dark"] .tip-box{background:#1a3a2a;color:#69db7c}
+.warn-box{border-left:4px solid var(--danger);background:#f8d7da;padding:16px 20px;border-radius:0 var(--radius) var(--radius) 0;margin:16px 0;color:#721c24}
+[data-theme="dark"] .warn-box{background:#3d1a1a;color:#ff6b6b}
+.table-wrap{overflow-x:auto;margin:16px 0}
+table{width:100%;border-collapse:collapse;font-size:.88em}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}
+th{background:var(--bg3);font-weight:700;color:var(--text)}
+tr:hover{background:var(--bg2)}
+.collapsible{margin-bottom:10px}
+.collapsible-btn{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;font-size:.95em;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text);transition:background .2s;text-align:left}
+.collapsible-btn:hover{background:var(--bg3)}
+.collapsible-btn .arrow{transition:transform .3s;font-size:.8em}
+.collapsible-btn.active .arrow{transform:rotate(180deg)}
+.collapsible-content{max-height:0;overflow:hidden;transition:max-height .4s ease;background:var(--bg);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius)}
+.collapsible-content.open{max-height:80000px;padding:14px 18px}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.72em;font-weight:700;margin-right:4px}
+.badge-high{background:#dc3545;color:#fff}.badge-med{background:#ffc107;color:#212529}.badge-low{background:#28a745;color:#fff}
+.qref{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin:16px 0}
+.qref h4{margin-bottom:10px;color:var(--accent)}
+.qref pre{margin:8px 0}
+.regex-box{background:var(--regex-bg);border:1px solid var(--regex-border);border-radius:var(--radius);padding:16px;margin:12px 0}
+.pattern-box{background:var(--pattern-bg);border:1px solid var(--pattern-border);border-radius:var(--radius);padding:16px;margin:12px 0}
+.example-box{background:var(--example-bg);border:1px solid var(--example-border);border-radius:var(--radius);padding:16px;margin:12px 0}
+.output-box{background:var(--output-bg);color:var(--output-text);padding:12px 16px;border-radius:var(--radius);margin:8px 0;font-family:"Fira Code","Cascadia Code","Consolas","Courier New",monospace;font-size:.84em;line-height:1.6}
+.cmd-box{background:var(--cmd-bg);color:var(--cmd-text);padding:12px 16px;border-radius:var(--radius);margin:8px 0;font-family:"Fira Code","Cascadia Code","Consolas","Courier New",monospace;font-size:.84em;line-height:1.6}
+.explain-box{background:var(--explain-bg);border:1px solid var(--explain-border);border-radius:var(--radius);padding:16px;margin:12px 0;color:#e65100}
+[data-theme="dark"] .explain-box{background:#2a1a0a;color:#ff9800}
+.tip-card{background:var(--tip-bg);border:1px solid var(--tip-border);border-radius:var(--radius);padding:16px;margin:12px 0}
+.scenario-box{background:var(--scenario-bg);border:1px solid var(--scenario-border);border-radius:var(--radius);padding:16px;margin:12px 0}
+.regex-matches{background:#c8e6c9;color:#2e7d32;padding:2px 6px;border-radius:4px;font-size:.84em;font-family:monospace}
+.regex-no-match{background:#ffcdd2;color:#c62828;padding:2px 6px;border-radius:4px;font-size:.84em;font-family:monospace}
+@media print{.topnav,.theme-toggle,.copy-btn{display:none}.chapter-header{background:#003d7a!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.section{page-break-inside:avoid}.collapsible-content{max-height:none!important;padding:14px 18px!important}}
+@media(max-width:768px){.chapter-header h1{font-size:1.5em}.topnav-links{display:none}.section{padding:24px 16px}}
+</style>
+</head>
+<body>
+
+<header class="chapter-header" id="top">
+<h1>Chapter 12 &mdash; Advanced Text Processing, Filtering, and Regular Expressions</h1>
+<p class="chapter-sub">grep, sed, awk, cut, sort, tr, tee, pipelines, and regex patterns for enterprise administration</p>
+<div class="chapter-badge">EX200K &bull; RHEL 10 &bull; Supplementary Skills</div>
+</header>
+
+<nav class="topnav">
+<div class="topnav-inner">
+<div class="topnav-links">
+<a href="RHCSA_Master_Index.html">&#x2190; Master Index</a>
+<a href="#objectives">Objectives</a>
+<a href="#why">Why</a>
+<a href="#streams">Streams</a>
+<a href="#grep">grep</a>
+<a href="#regex">Regex</a>
+<a href="#loggrep">Log grep</a>
+<a href="#sed">sed</a>
+<a href="#awk">awk</a>
+<a href="#cut">cut</a>
+<a href="#sort">sort</a>
+<a href="#uniq">uniq</a>
+<a href="#tr">tr</a>
+<a href="#tee">tee</a>
+<a href="#pipelines">Pipelines</a>
+<a href="#realworld">Real World</a>
+<a href="#loganalysis">Logs</a>
+<a href="#troubleshoot">Troubleshoot</a>
+<a href="#practice">Practice</a>
+<a href="#solutions">Solutions</a>
+<a href="#cheatsheet">Cheat Sheet</a>
+</div>
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#9790;</button>
+</div>
+</nav>
+
+<!-- OBJECTIVES COVERED -->
+<section class="section" id="objectives">
+<div class="container">
+<h2>Objectives Covered</h2>
+<div class="obj-box">
+<h4>Official RHCSA EX200K Objectives</h4>
+<ul>
+<li><strong>Understand and use essential tools:</strong> Use grep and regular expressions to analyze text</li>
+<li><strong>Operate running systems:</strong> Locate and interpret system log files and journals</li>
+<li><strong>Create simple shell scripts:</strong> Process output of shell commands within a script</li>
+</ul>
+<p><em>Although advanced text processing extends beyond the official objectives, these skills are essential for efficient system administration and significantly improve exam performance.</em></p>
+</div>
+</div>
+</section>
+
+<!-- WHY THESE TOOLS MATTER -->
+<section class="section" id="why">
+<div class="container">
+<h2>Why These Tools Matter for Linux Administrators</h2>
+<p>Every day, Linux administrators process text. System logs, configuration files, process listings, network outputs, and user databases are all text streams. Mastering text processing tools means:</p>
+<ul>
+<li><strong>Faster troubleshooting</strong> &mdash; Find errors in thousands of log lines in seconds</li>
+<li><strong>Automated reporting</strong> &mdash; Generate system reports without manual inspection</li>
+<li><strong>Configuration management</strong> &mdash; Modify config files programmatically</li>
+<li><strong>Data extraction</strong> &mdash; Pull specific fields from structured data</li>
+<li><strong>Pattern matching</strong> &mdash; Identify security events, failed logins, resource issues</li>
+</ul>
+<div class="exam-box">
+<h3>&#x1F3AF; Exam Relevance</h3>
+<p>While the RHCSA exam focuses on administration tasks, you'll need text processing to:</p>
+<ul>
+<li>Verify configurations (<code>grep</code> in config files)</li>
+<li>Analyze journal output (<code>journalctl | grep</code>)</li>
+<li>Validate user/group entries (<code>awk</code> on /etc/passwd)</li>
+<li>Check service status in logs</li>
+<li>Process command output in shell scripts</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- UNDERSTANDING TEXT STREAMS -->
+<section class="section" id="streams">
+<div class="container">
+<h2>Understanding Text Streams</h2>
+<h3>Concepts</h3>
+<p>In Linux, <strong>everything is a stream of text</strong>. Commands read from <strong>standard input (stdin)</strong>, write to <strong>standard output (stdout)</strong>, and errors go to <strong>standard error (stderr)</strong>. These three streams are the foundation of text processing.</p>
+<h4>File Descriptors</h4>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Descriptor</th><th>Name</th><th>Symbol</th><th>Default Destination</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>Standard Input (stdin)</td><td><code>&lt;</code></td><td>Keyboard</td></tr>
+<tr><td>1</td><td>Standard Output (stdout)</td><td><code>&gt;</code></td><td>Terminal</td></tr>
+<tr><td>2</td><td>Standard Error (stderr)</td><td><code>2&gt;</code></td><td>Terminal</td></tr>
+</tbody>
+</table>
+</div>
+<h4>Pipe Operator</h4>
+<p>The pipe <code>|</code> connects stdout of one command to stdin of the next:</p>
+<pre><code>command1 | command2 | command3</code></pre>
+<p>Each command processes the output of the previous one, forming a <strong>pipeline</strong>.</p>
+<h4>Redirection Review</h4>
+<pre><code># Overwrite file with stdout
+command > file.txt
+
+# Append stdout to file
+command >> file.txt
+
+# Redirect stderr to file
+command 2> errors.txt
+
+# Redirect both stdout and stderr
+command > output.txt 2>&1
+# Or shorthand:
+command &> output.txt
+
+# Redirect stdin from file
+command < input.txt
+
+# Discard output
+command > /dev/null 2>&1</code></pre>
+<div class="explain-box">
+<strong>Why this matters:</strong> Text processing tools read from stdin by default. Understanding streams lets you chain any command into a processing pipeline.
+</div>
+</div>
+</section>
+
+<!-- GREP FUNDAMENTALS -->
+<section class="section" id="grep">
+<div class="container">
+<h2>grep Fundamentals</h2>
+<h3>Concepts</h3>
+<p><code>grep</code> (Global Regular Expression Print) searches text for patterns and prints matching lines. It is the most frequently used text processing tool in Linux administration.</p>
+<h4>Basic Syntax</h4>
+<pre><code>grep [options] pattern [file...]
+command | grep [options] pattern</code></pre>
+<h4>Essential Options</h4>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Option</th><th>Description</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td><code>-i</code></td><td>Case-insensitive search</td><td><code>grep -i "error" syslog</code></td></tr>
+<tr><td><code>-v</code></td><td>Invert match (show non-matching)</td><td><code>grep -v "^#" /etc/fstab</code></td></tr>
+<tr><td><code>-n</code></td><td>Show line numbers</td><td><code>grep -n "root" /etc/passwd</code></td></tr>
+<tr><td><code>-c</code></td><td>Count matching lines</td><td><code>grep -c "Failed" /var/log/secure</code></td></tr>
+<tr><td><code>-l</code></td><td>List filenames with matches</td><td><code>grep -l "error" /var/log/*.log</code></td></tr>
+<tr><td><code>-r</code></td><td>Recursive directory search</td><td><code>grep -r "192.168" /etc/</code></td></tr>
+<tr><td><code>-w</code></td><td>Match whole words only</td><td><code>grep -w "ssh" /etc/services</code></td></tr>
+<tr><td><code>-A N</code></td><td>Show N lines after match</td><td><code>grep -A 3 "error" syslog</code></td></tr>
+<tr><td><code>-B N</code></td><td>Show N lines before match</td><td><code>grep -B 2 "crash" syslog</code></td></tr>
+<tr><td><code>-C N</code></td><td>Show N lines context around match</td><td><code>grep -C 5 "warning" syslog</code></td></tr>
+<tr><td><code>-o</code></td><td>Output only matching part</td><td><code>grep -oE '[0-9]+' file</code></td></tr>
+<tr><td><code>--color</code></td><td>Highlight matching text</td><td><code>grep --color "error" syslog</code></td></tr>
+<tr><td><code>-E</code></td><td>Extended regex (same as egrep)</td><td><code>grep -E "error|warning"</code></td></tr>
+</tbody>
+</table>
+</div>
+<h4>Beginner Example: Search /etc/passwd</h4>
+<pre><code># Find all users with bash shell
+grep "bash" /etc/passwd
+
+# Count users with nologin shell
+grep -c "nologin" /etc/passwd
+
+# Find root account
+grep "^root:" /etc/passwd</code></pre>
+<div class="output-box">root:x:0:0:root:/root:/bin/bash</div>
+<h4>Intermediate Example: Log Analysis</h4>
+<pre><code># Find failed SSH attempts
+grep "Failed password" /var/log/secure
+
+# Show 3 lines of context around each error
+grep -C 3 "error" /var/log/messages
+
+# Count active httpd processes
+ps aux | grep -v grep | grep "httpd" | wc -l</code></pre>
+<h4>Advanced Example: Multiple Patterns</h4>
+<pre><code># Search for multiple patterns (extended regex)
+grep -E "error|warning|critical" /var/log/messages
+
+# Search recursively with file filter
+grep -ri "password" /etc/ssh/ --include="*.conf"
+
+# Combine grep with other tools
+journalctl -u sshd | grep -i "failed" | grep -v "pam" | wc -l</code></pre>
+<div class="explain-box">
+<strong>Why this works:</strong> Each grep in the pipeline filters the output further. The first grep finds failed SSH events, the second removes PAM noise, and wc counts the remaining lines.
+</div>
+<h4>grep vs egrep vs grep -E</h4>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Command</th><th>Regex Type</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td><code>grep</code></td><td>Basic Regular Expressions (BRE)</td><td>Default, use with <code>\</code> escaping</td></tr>
+<tr><td><code>grep -E</code></td><td>Extended Regular Expressions (ERE)</td><td>Preferred &mdash; cleaner syntax</td></tr>
+<tr><td><code>egrep</code></td><td>Extended Regular Expressions (ERE)</td><td>Deprecated, use <code>grep -E</code></td></tr>
+<tr><td><code>fgrep</code></td><td>Fixed strings (no regex)</td><td>Fastest for literal strings</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- REGULAR EXPRESSIONS -->
+<section class="section" id="regex">
+<div class="container">
+<h2>Regular Expressions</h2>
+<h3>Concepts</h3>
+<p>Regular expressions (regex) are patterns that describe text. They are the most powerful feature of grep and many other text processing tools. Understanding regex is <strong>essential</strong> for efficient Linux administration.</p>
+
+<h3>Basic Regular Expressions (BRE)</h3>
+<p>Basic regex uses <code>grep</code> without the <code>-E</code> flag. Special characters need backslash escaping.</p>
+<div class="pattern-box">
+<h4>&#x1F4CB; BRE Metacharacters</h4>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Pattern</th><th>Matches</th><th>Example</th><th>Matches</th></tr></thead>
+<tbody>
+<tr><td><code>.</code></td><td>Any single character</td><td><code>ro.t</code></td><td>root, rot, roat</td></tr>
+<tr><td><code>^</code></td><td>Start of line</td><td><code>^root</code></td><td>Lines starting with "root"</td></tr>
+<tr><td><code>$</code></td><td>End of line</td><td><code>/bin/bash$</code></td><td>Lines ending with /bin/bash</td></tr>
+<tr><td><code>*</code></td><td>Zero or more of previous</td><td><code>colou*r</code></td><td>color, colour</td></tr>
+<tr><td><code>\+</code></td><td>One or more (escaped)</td><td><code>go\+le</code></td><td>gogle, google</td></tr>
+<tr><td><code>\?</code></td><td>Zero or one (escaped)</td><td><code>colou?r</code></td><td>color, colour</td></tr>
+<tr><td><code>\{n\}</code></td><td>Exactly n repetitions</td><td><code>a\{3\}</code></td><td>aaa</td></tr>
+<tr><td><code>\{n,m\}</code></td><td>n to m repetitions</td><td><code>a\{2,4\}</code></td><td>aa, aaa, aaaa</td></tr>
+<tr><td><code>[]</code></td><td>Character class</td><td><code>[aeiou]</code></td><td>Any vowel</td></tr>
+<tr><td><code>[^]</code></td><td>Negated class</td><td><code>[^0-9]</code></td><td>Non-digit</td></tr>
+<tr><td><code>\( \)</code></td><td>Grouping (escaped)</td><td><code>\(ab\)\+</code></td><td>ab, abab, ababab</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<h3>Extended Regular Expressions (ERE)</h3>
+<p>Extended regex uses <code>grep -E</code>. Special characters work directly without escaping:</p>
+<div class="pattern-box">
+<h4>&#x1F4CB; ERE Metacharacters</h4>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Pattern</th><th>Matches</th><th>Example</th><th>Matches</th></tr></thead>
+<tbody>
+<tr><td><code>.</code></td><td>Any single character</td><td><code>ro.t</code></td><td>root, rot, roat</td></tr>
+<tr><td><code>^</code></td><td>Start of line</td><td><code>^root</code></td><td>Lines starting with "root"</td></tr>
+<tr><td><code>$</code></td><td>End of line</td><td><code>/bin/bash$</code></td><td>Lines ending with /bin/bash</td></tr>
+<tr><td><code>*</code></td><td>Zero or more</td><td><code>colou*r</code></td><td>color, colour</td></tr>
+<tr><td><code>+</code></td><td>One or more</td><td><code>go+le</code></td><td>gogle, google</td></tr>
+<tr><td><code>?</code></td><td>Zero or one</td><td><code>colou?r</code></td><td>color, colour</td></tr>
+<tr><td><code>{n}</code></td><td>Exactly n times</td><td><code>a{3}</code></td><td>aaa</td></tr>
+<tr><td><code>{n,m}</code></td><td>n to m times</td><td><code>a{2,4}</code></td><td>aa, aaa, aaaa</td></tr>
+<tr><td><code>|</code></td><td>Alternation (OR)</td><td><code>error|warning</code></td><td>error OR warning</td></tr>
+<tr><td><code>()</code></td><td>Grouping</td><td><code>(ab)+</code></td><td>ab, abab, ababab</td></tr>
+<tr><td><code>[]</code></td><td>Character class</td><td><code>[0-9]</code></td><td>Any digit</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<h4>POSIX Character Classes</h4>
+<div class="pattern-box">
+<div class="table-wrap">
+<table>
+<thead><tr><th>Class</th><th>Equivalent</th><th>Matches</th></tr></thead>
+<tbody>
+<tr><td><code>[[:alpha:]]</code></td><td><code>[a-zA-Z]</code></td><td>Any letter</td></tr>
+<tr><td><code>[[:digit:]]</code></td><td><code>[0-9]</code></td><td>Any digit</td></tr>
+<tr><td><code>[[:alnum:]]</code></td><td><code>[a-zA-Z0-9]</code></td><td>Alphanumeric</td></tr>
+<tr><td><code>[[:space:]]</code></td><td><code>[ \t\n\r]</code></td><td>Whitespace</td></tr>
+<tr><td><code>[[:punct:]]</code></td><td><code>[!"#$%&...]</code></td><td>Punctuation</td></tr>
+<tr><td><code>[[:upper:]]</code></td><td><code>[A-Z]</code></td><td>Uppercase</td></tr>
+<tr><td><code>[[:lower:]]</code></td><td><code>[a-z]</code></td><td>Lowercase</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<h4>Regex Examples for Administrators</h4>
+<h5>Match IP Addresses</h5>
+<pre><code># Match IPv4 addresses in log files
+grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' /var/log/secure
+
+# Match specific subnet
+grep -E '192\.168\.1\.[0-9]+' /var/log/messages</code></pre>
+<div class="explain-box">
+<strong>Why this works:</strong> <code>[0-9]{1,3}</code> matches 1-3 digits. <code>\.</code> matches literal dots. <code>-o</code> outputs only the matching part.
+</div>
+
+<h5>Match Email Addresses</h5>
+<pre><code># Find email addresses in files
+grep -Eo '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}' /etc/aliases</code></pre>
+
+<h5>Match Log Timestamps</h5>
+<pre><code># Match syslog timestamps (e.g., "Jan 15 08:30:45")
+grep -E '^[A-Z][a-z]{2} [ 0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}' /var/log/messages
+
+# Match ISO timestamps
+grep -Eo '[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}' /var/log/syslog</code></pre>
+
+<h4>Matching vs Non-Matching Examples</h4>
+<div class="pattern-box">
+<h4>&#x1F4CB; Pattern: <code>^User [a-z]+</code></h4>
+<p><strong>Purpose:</strong> Match SSH user login messages</p>
+<p><span class="regex-matches">&#x2705; Matches:</span> <code>User admin from 192.168.1.100</code></p>
+<p><span class="regex-matches">&#x2705; Matches:</span> <code>User sysop from 10.0.0.5</code></p>
+<p><span class="regex-no-match">&#x274C No match:</span> <code>user admin from 192.168.1.100</code> (lowercase 'u')</p>
+<p><span class="regex-no-match">&#x274C No match:</span> <code>User Admin from 192.168.1.100</code> (uppercase 'A')</p>
+</div>
+
+<div class="pattern-box">
+<h4>&#x1F4CB; Pattern: <code>error|warning|critical</code></h4>
+<p><strong>Purpose:</strong> Match severity levels in log files</p>
+<p><span class="regex-matches">&#x2705; Matches:</span> <code>ERROR: disk full</code></p>
+<p><span class="regex-matches">&#x2705; Matches:</span> <code>warning: low memory</code></p>
+<p><span class="regex-matches">&#x2705; Matches:</span> <code>critical: service down</code></p>
+<p><span class="regex-no-match">&#x274C No match:</span> <code>info: service started</code></p>
+<p><span class="regex-no-match">&#x274C No match:</span> <code>debug: connection established</code></p>
+</div>
+
+<div class="pattern-box">
+<h4>&#x1F4CB; Pattern: <code>[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}</code></h4>
+<p><strong>Purpose:</strong> Match IPv4 addresses</p>
+<p><span class="regex-matches">&#x2705; Matches:</span> <code>192.168.1.100</code></p>
+<p><span class="regex-matches">&#x2705; Matches:</span> <code>10.0.0.1</code></p>
+<p><span class="regex-matches">&#x2705; Matches:</span> <code>255.255.255.0</code></p>
+<p><span class="regex-no-match">&#x274C No match:</span> <code>192.168.1</code> (only 3 octets)</p>
+</div>
+</div>
+</section>
+
+<!-- GREP FOR LOG ANALYSIS -->
+<section class="section" id="loggrep">
+<div class="container">
+<h2>Using grep for Log Analysis</h2>
+<h3>Concepts</h3>
+<p>Log analysis is the most common use of grep in Linux administration. System logs contain critical information about security events, service failures, and system health.</p>
+<h4>Common Log Files on RHEL 10</h4>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Log File</th><th>Content</th><th>Key Patterns</th></tr></thead>
+<tbody>
+<tr><td><code>/var/log/messages</code></td><td>General system messages</td><td>error, warning, critical</td></tr>
+<tr><td><code>/var/log/secure</code></td><td>Authentication events</td><td>Failed password, Accepted, session opened</td></tr>
+<tr><td><code>/var/log/cron</code></td><td>Cron job execution</td><td>CMD, RELOAD</td></tr>
+<tr><td><code>/var/log/maillog</code></td><td>Mail system events</td><td>status=sent, status=bounced</td></tr>
+<tr><td><code>/var/log/dnf.log</code></td><td>Package management</td><td>Installed, Updated, Erased</td></tr>
+<tr><td><code>journalctl</code></td><td>Systemd journal</td><td>Use <code>-u</code> for service filtering</td></tr>
+</tbody>
+</table>
+</div>
+<h4>Security Analysis</h4>
+<pre><code># Count failed SSH login attempts
+grep -c "Failed password" /var/log/secure
+
+# Find all unique IPs that failed SSH login
+grep "Failed password" /var/log/secure | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | sort -u
+
+# Find successful SSH logins
+grep "Accepted" /var/log/secure
+
+# Find root login attempts
+grep "root" /var/log/secure | grep -E "Failed|Accepted"</code></pre>
+<h4>Service Troubleshooting</h4>
+<pre><code># Find errors for specific service in journal
+journalctl -u httpd | grep -i "error"
+
+# Find warnings in the last hour
+journalctl --since "1 hour ago" | grep -i "warning"
+
+# Count service restarts
+journalctl -u nginx | grep -c "Started\|Stopped"
+
+# Find disk-related errors
+journalctl -k | grep -i "disk\|I/O\|ext4\|xfs"</code></pre>
+<h4>Resource Monitoring</h4>
+<pre><code># Find OOM killer events
+journalctl -k | grep -i "out of memory\|oom"
+
+# Find disk space warnings
+grep -i "disk\|space\|full" /var/log/messages
+
+# Find high load average entries
+grep -E "load average.*[89]|[1-9][0-9]" /var/log/syslog</code></pre>
+</div>
+</section>
+
+<!-- SED FUNDAMENTALS -->
+<section class="section" id="sed">
+<div class="container">
+<h2>sed Fundamentals</h2>
+<h3>Concepts</h3>
+<p><code>sed</code> (Stream Editor) processes text line by line, applying commands to each line. It is powerful for find-and-replace operations, text transformations, and configuration file modifications.</p>
+<h4>Basic Syntax</h4>
+<pre><code>sed [options] 'command' file
+command | sed [options] 'command'
+sed [options] -e 'cmd1' -e 'cmd2' file
+sed [options] -f scriptfile file</code></pre>
+<h4>Essential Options</h4>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Option</th><th>Description</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td><code>-n</code></td><td>Suppress automatic printing</td><td><code>sed -n '5p' file</code></td></tr>
+<tr><td><code>-i</code></td><td>Edit file in-place</td><td><code>sed -i 's/old/new/' file</code></td></tr>
+<tr><td><code>-e</code></td><td>Execute command</td><td><code>sed -e 's/a/b/' -e 's/c/d/'</code></td></tr>
+<tr><td><code>-f</code></td><td>Read commands from file</td><td><code>sed -f script.sed file</code></td></tr>
+<tr><td><code>-r</code></td><td>Extended regex (GNU sed)</td><td><code>sed -r 's/(a|b)/c/'</code></td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>sed Substitution Operations</h3>
+<h4>Basic Substitution</h4>
+<pre><code># Replace first occurrence on each line
+sed 's/old/new/' file.txt
+
+# Replace all occurrences on each line
+sed 's/old/new/g' file.txt
+
+# Replace only on line 5
+sed '5s/old/new/' file.txt
+
+# Replace on lines 10 through 20
+sed '10,20s/old/new/g' file.txt
+
+# Case-insensitive replacement
+sed 's/old/new/gi' file.txt</code></pre>
+
+<h4>In-Place Editing (backup first!)</h4>
+<pre><code># Edit file with backup
+sed -i.bak 's/old/new/g' /etc/config.conf
+
+# Edit file without backup (careful!)
+sed -i 's/old/new/g' /etc/config.conf</code></pre>
+<div class="warn-box">
+<h3>&#x26A0;&#xFE0F; Warning</h3>
+<p>Always use <code>-i.bak</code> or <code>-i.backup</code> to create a backup before editing configuration files in-place. A typo can corrupt critical system files.</p>
+</div>
+
+<h4>Substitution with Regex</h4>
+<pre><code># Replace IP addresses with placeholder
+sed 's/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/IP_ADDRESS/g' log.txt
+
+# Remove all digits from a file
+sed 's/[0-9]//g' file.txt
+
+# Replace multiple spaces with single space
+sed 's/  */ /g' file.txt
+
+# Remove empty lines
+sed '/^$/d' file.txt
+
+# Remove comments and empty lines from config
+sed -e '/^#/d' -e '/^$/d' /etc/fstab</code></pre>
+
+<h3>sed Deletion Operations</h3>
+<pre><code># Delete line 5
+sed '5d' file.txt
+
+# Delete lines 10 through 20
+sed '10,20d' file.txt
+
+# Delete last line
+sed '$d' file.txt
+
+# Delete lines matching pattern
+sed '/pattern/d' file.txt
+
+# Delete all empty lines
+sed '/^$/d' file.txt
+
+# Delete comment lines
+sed '/^#/d' file.txt
+
+# Delete lines NOT matching pattern (complement)
+sed '/pattern/!d' file.txt</code></pre>
+
+<h3>sed Pattern Matching and Printing</h3>
+<pre><code># Print only line 5 (with -n to suppress other output)
+sed -n '5p' file.txt
+
+# Print lines matching pattern
+sed -n '/error/p' /var/log/messages
+
+# Print lines 10 through 20
+sed -n '10,20p' file.txt
+
+# Print lines matching range
+sed -n '/BEGIN/,/END/p' file.txt
+
+# Show line numbers with matches
+sed -n '/error/=' file.txt</code></pre>
+
+<h4>Advanced sed Examples</h4>
+<pre><code># Insert text before a line
+sed '/pattern/i\New line here' file.txt
+
+# Insert text after a line
+sed '/pattern/a\New line here' file.txt
+
+# Replace text only on matching lines
+sed '/pattern/s/old/new/g' file.txt
+
+# Convert Windows line endings to Unix
+sed 's/\r$//' file.txt
+
+# Extract first field from /etc/passwd
+sed -n 's/^\([^:]*\):.*/\1/p' /etc/passwd</code></pre>
+<div class="explain-box">
+<strong>Why this works:</strong> <code>\( \)</code> captures groups in BRE. <code>\1</code> is a back-reference to the captured group. The <code>s</code> command with <code>-n</code> and <code>p</code> extracts specific data.
+</div>
+</div>
+</section>
+
+<!-- AWK FUNDAMENTALS -->
+<section class="section" id="awk">
+<div class="container">
+<h2>awk Fundamentals</h2>
+<h3>Concepts</h3>
+<p><code>awk</code> is a powerful text processing language designed for field-based processing. It is ideal for extracting columns, generating reports, and performing calculations on structured text data.</p>
+<h4>Basic Syntax</h4>
+<pre><code>awk 'pattern { action }' file
+command | awk 'pattern { action }'
+awk -v var=value '{ print var, $1 }' file</code></pre>
+<h4>Key Variables</h4>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Variable</th><th>Description</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td><code>$0</code></td><td>Entire line</td><td><code>print $0</code> prints full line</td></tr>
+<tr><td><code>$1</code></td><td>First field</td><td><code>print $1</code> prints first column</td></tr>
+<tr><td><code>$2</code></td><td>Second field</td><td><code>print $2</code> prints second column</td></tr>
+<tr><td><code>NF</code></td><td>Number of fields in line</td><td><code>NF > 3</code> lines with 4+ fields</td></tr>
+<tr><td><code>NR</code></td><td>Record (line) number</td><td><code>NR==5</code> fifth line</td></tr>
+<tr><td><code>FS</code></td><td>Field separator</td><td><code>FS=":"</code> colon separator</td></tr>
+<tr><td><code>OFS</code></td><td>Output field separator</td><td><code>OFS=","</code> comma output</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Fields and Records</h3>
+<h4>Default Field Separator (Whitespace)</h4>
+<pre><code># Print first column of /etc/passwd (usernames)
+awk '{print $1}' /etc/passwd
+
+# Print specific fields
+awk '{print $1, $3}' /etc/passwd</pre>
+
+<h4>Custom Field Separator</h4>
+<pre><code># Colon-separated fields (passwd, shadow, group)
+awk -F: '{print $1}' /etc/passwd
+awk -F: '{print $1, $3, $6}' /etc/passwd
+
+# Comma-separated fields (CSV)
+awk -F, '{print $1, $3}' data.csv</code></pre>
+
+<h3>Variables In awk</h3>
+<pre><code># Use external variable
+awk -v threshold=1000 '$3 >= threshold {print $1}' /etc/passwd
+
+# Built-in variables
+awk 'NR==1 {print "Header: " $0}' file.txt
+awk 'END {print "Total lines: " NR}' file.txt
+awk '{print NR": "$0}' file.txt
+
+# User-defined variables
+awk '{count++; total+=$3} END {print "Average: "total/count}' file.txt</code></pre>
+
+<h3>Conditions and Loops In awk</h3>
+<h4>Pattern Matching</h4>
+<pre><code># Match lines containing "root"
+awk '/root/ {print $0}' /etc/passwd
+
+# Match lines where UID is 0
+awk -F: '$3 == 0 {print $1}' /etc/passwd
+
+# Match lines where shell is bash
+awk -F: '$7 == "/bin/bash" {print $1}' /etc/passwd
+
+# Numeric comparison
+awk -F: '$3 >= 1000 {print $1, $3}' /etc/passwd
+
+# String comparison
+awk -F: '$1 > "m" {print $1}' /etc/passwd</code></pre>
+
+<h4>BEGIN and END Blocks</h4>
+<pre><code># Count users with custom header/footer
+awk -F: 'BEGIN {print "=== User Report ==="}
+{users++; print $1, "UID:", $3}
+END {print "=== Total: " users " users ==="}' /etc/passwd
+
+# Sum disk usage
+awk 'BEGIN {total=0}
+{total+=$1}
+END {print "Total KB: " total}' /tmp/sizes.txt</code></pre>
+
+<h4>Loops in awk</h4>
+<pre><code># Print all fields with their position
+awk '{for(i=1; i<=NF; i++) print "Field "i": "$i}' file.txt
+
+# Print only even-numbered fields
+awk '{for(i=2; i<=NF; i+=2) printf "%s ", $i; print ""}' file.txt
+
+# Reverse field order
+awk '{for(i=NF; i>=1; i--) printf "%s ", $i; print ""}' file.txt</code></pre>
+
+<h3>Report Generation Using awk</h3>
+<h4>User Account Report</h4>
+<pre><code># Generate user account summary
+awk -F: 'BEGIN {
+    printf "%-15s %-8s %-8s %-20s\n", "USERNAME", "UID", "GID", "HOME"
+    printf "%-15s %-8s %-8s %-20s\n", "--------", "---", "---", "----"
+}
+$3 >= 1000 {
+    printf "%-15s %-8s %-8s %-20s\n", $1, $3, $4, $6
+}
+END {
+    print "Total regular users: " NR
+}' /etc/passwd</code></pre>
+
+<h4>Disk Usage Report</h4>
+<pre><code># Analyze disk usage by filesystem type
+df -h | awk 'NR>1 {
+    printf "Filesystem: %-20s Size: %-10s Used: %s Type: %s\n",
+    $1, $2, $5, $NF
+}'</code></pre>
+
+<h4>Process Summary</h4>
+<pre><code># Process resource summary
+ps aux | awk 'NR==1 {next}
+{
+    users[$1]++
+    mem[$1]+=$4
+    cpu[$1]+=$3
+}
+END {
+    printf "%-15s %-8s %-10s %-10s\n", "USER", "PROCS", "MEM%", "CPU%"
+    for (u in users)
+        printf "%-15s %-8d %-10.1f %-10.1f\n", u, users[u], mem[u], cpu[u]
+}'</code></pre>
+<div class="explain-box">
+<strong>Why this works:</strong> awk arrays (associative arrays) accumulate data per user. The END block processes the accumulated data. <code>NR==1 {next}</code> skips the header line.
+</div>
+</div>
+</section>
+
+<!-- CUT COMMAND -->
+<section class="section" id="cut">
+<div class="container">
+<h2>cut Command</h2>
+<h3>Concepts</h3>
+<p><code>cut</code> extracts specific sections from each line of input. It is simpler than awk but faster for basic column extraction.</p>
+<h4>Essential Options</h4>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Option</th><th>Description</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td><code>-d CHAR</code></td><td>Set delimiter character</td><td><code>cut -d: -f1</code></td></tr>
+<tr><td><code>-f LIST</code></td><td>Select fields</td><td><code>cut -f1,3,5</code></td></tr>
+<tr><td><code>-c LIST</code></td><td>Select characters</td><td><code>cut -c1-5</code></td></tr>
+<tr><td><code>-s</code></td><td>Only print lines with delimiter</td><td><code>cut -s -d: -f1</code></td></tr>
+</tbody>
+</table>
+</div>
+<h4>Examples</h4>
+<pre><code># Extract usernames from /etc/passwd
+cut -d: -f1 /etc/passwd
+
+# Extract username and home directory
+cut -d: -f1,6 /etc/passwd
+
+# Extract UID and GID
+cut -d: -f3,4 /etc/passwd
+
+# Get first 10 characters of each line
+cut -c1-10 file.txt
+
+# Extract specific fields with custom delimiter
+cut -d',' -f2,4 data.csv
+
+# Combine with other commands
+cut -d: -f1 /etc/passwd | sort | uniq -c | sort -rn</code></pre>
+<div class="explain-box">
+<strong>Why this works:</strong> <code>-d:</code> sets colon as delimiter. <code>-f1,6</code> selects fields 1 and 6. Piping to sort and uniq creates a frequency count.
+</div>
+</div>
+</section>
+
+<!-- SORT COMMAND -->
+<section class="section" id="sort">
+<div class="container">
+<h2>sort Command</h2>
+<h3>Concepts</h3>
+<p><code>sort</code> orders lines of text. It is essential for organizing data before processing with <code>uniq</code> or for generating sorted reports.</p>
+<h4>Essential Options</h4>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Option</th><th>Description</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td><code>-r</code></td><td>Reverse order</td><td><code>sort -r file</code></td></tr>
+<tr><td><code>-n</code></td><td>Numeric sort</td><td><code>sort -n numbers.txt</code></td></tr>
+<tr><td><code>-u</code></td><td>Remove duplicates</td><td><code>sort -u file</code></td></tr>
+<tr><td><code>-f</code></td><td>Case-insensitive</td><td><code>sort -f file</code></td></tr>
+<tr><td><code>-t CHAR</code></td><td>Set field delimiter</td><td><code>sort -t: -k3</code></td></tr>
+<tr><td><code>-k N</code></td><td>Sort by field N</td><td><code>sort -k2 file</code></td></tr>
+<tr><td><code>-h</code></td><td>Human-readable numbers</td><td><code>sort -h sizes.txt</code></td></tr>
+<tr><td><code>-V</code></td><td>Version sort</td><td><code>sort -V versions.txt</code></td></tr>
+</tbody>
+</table>
+</div>
+<h4>Examples</h4>
+<pre><code># Sort alphabetically
+sort file.txt
+
+# Sort numerically
+sort -n numbers.txt
+
+# Sort in reverse numeric order
+sort -rn numbers.txt
+
+# Sort by UID in /etc/passwd
+sort -t: -k3 -n /etc/passwd
+
+# Sort by username
+sort -t: -k1 /etc/passwd
+
+# Remove duplicates
+sort -u file.txt
+
+# Sort by disk usage (human-readable)
+du -sh /* 2>/dev/null | sort -rh
+
+# Sort process list by memory usage
+ps aux --sort=-%mem | head -11</code></pre>
+<div class="explain-box">
+<strong>Why this works:</strong> <code>-t:</code> sets the delimiter. <code>-k3</code> sorts by the third field. <code>-n</code> treats the field as a number. <code>-r</code> reverses the order.
+</div>
+</div>
+</section>
+
+<!-- UNIQ COMMAND -->
+<section class="section" id="uniq">
+<div class="container">
+<h2>uniq Command</h2>
+<h3>Concepts</h3>
+<p><code>uniq</code> filters adjacent duplicate lines. <strong>Important:</strong> data must be sorted first for uniq to work correctly on all duplicates.</p>
+<h4>Essential Options</h4>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Option</th><th>Description</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td><code>-c</code></td><td>Count occurrences</td><td><code>uniq -c</code></td></tr>
+<tr><td><code>-d</code></td><td>Show only duplicates</td><td><code>uniq -d</code></td></tr>
+<tr><td><code>-u</code></td><td>Show only unique lines</td><td><code>uniq -u</code></td></tr>
+<tr><td><code>-i</code></td><td>Case-insensitive</td><td><code>uniq -i</code></td></tr>
+</tbody>
+</table>
+</div>
+<h4>Examples</h4>
+<pre><code># Remove adjacent duplicates (sort first!)
+sort file.txt | uniq
+
+# Count occurrences of each unique line
+sort file.txt | uniq -c
+
+# Show only duplicated lines
+sort file.txt | uniq -d
+
+# Show only lines that appear once
+sort file.txt | uniq -u
+
+# Count unique users in /etc/passwd by shell
+cut -d: -f7 /etc/passwd | sort | uniq -c | sort -rn
+
+# Count failed SSH attempts per IP
+grep "Failed password" /var/log/secure | \
+  grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | \
+  sort | uniq -c | sort -rn</code></pre>
+<div class="explain-box">
+<strong>Why this works:</strong> sort groups identical lines together. uniq -c counts adjacent identical lines. The final sort -rn orders by count (highest first).
+</div>
+</div>
+</section>
+
+<!-- TR COMMAND -->
+<section class="section" id="tr">
+<div class="container">
+<h2>tr Command</h2>
+<h3>Concepts</h3>
+<p><code>tr</code> (translate) replaces or deletes characters. It works on individual characters, not patterns.</p>
+<h4>Essential Options</h4>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Option</th><th>Description</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td><code>-d</code></td><td>Delete characters</td><td><code>tr -d '0-9'</code></td></tr>
+<tr><td><code>-s</code></td><td>Squeeze repeats</td><td><code>tr -s ' '</code></td></tr>
+<tr><td><code>-c</code></td><td>Complement set</td><td><code>tr -c 'a-z\n'</code></td></tr>
+</tbody>
+</table>
+</div>
+<h4>Examples</h4>
+<pre><code># Convert uppercase to lowercase
+echo "HELLO WORLD" | tr 'A-Z' 'a-z'
+
+# Convert lowercase to uppercase
+echo "hello world" | tr 'a-z' 'A-Z'
+
+# Delete all digits
+echo "abc123def456" | tr -d '0-9'
+
+# Delete all non-printable characters
+cat file.txt | tr -cd '[:print:]\n'
+
+# Squeeze multiple spaces into one
+echo "hello   world" | tr -s ' '
+
+# Replace spaces with tabs
+echo "hello world" | tr ' ' '\t'
+
+# Replace multiple characters
+echo "a-b-c-d" | tr '-' '_'
+
+# Delete everything except letters and newlines
+echo "hello123 world456" | tr -cd 'a-zA-Z\n'
+
+# Convert Windows line endings
+cat file.txt | tr -d '\r'</code></pre>
+<div class="explain-box">
+<strong>Why this works:</strong> tr takes two sets of characters. Each character in set1 is replaced by the corresponding character in set2. <code>-d</code> deletes characters in the set. <code>-s</code> squeezes repeated characters.
+</div>
+</div>
+</section>
+
+<!-- TEE COMMAND -->
+<section class="section" id="tee">
+<div class="container">
+<h2>tee Command</h2>
+<h3>Concepts</h3>
+<p><code>tee</code> reads from stdin and writes to both stdout and files. It is like a T-splitter for data streams.</p>
+<h4>Essential Options</h4>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Option</th><th>Description</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td><code>-a</code></td><td>Append to file</td><td><code>tee -a log.txt</code></td></tr>
+<tr><td><code>-i</code></td><td>Ignore SIGINT</td><td><code>tee -i log.txt</code></td></tr>
+</tbody>
+</table>
+</div>
+<h4>Examples</h4>
+<pre><code># Save output to file while displaying it
+ls -la | tee /tmp/dir_listing.txt
+
+# Append to file
+date | tee -a /tmp/timestamps.txt
+
+# Write to multiple files
+echo "important data" | tee /tmp/file1.txt /tmp/file2.txt
+
+# Combine with sudo (save as root, display as user)
+echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf
+
+# Pipe through tee for debugging
+ps aux | tee /tmp/processes.txt | grep "httpd"
+
+# Discard stdout, save to file only
+command | tee /dev/null > /tmp/output.txt</code></pre>
+<div class="explain-box">
+<strong>Why this works:</strong> tee splits the stream: one copy goes to the file, one copy continues to stdout. This lets you save intermediate results while continuing the pipeline.
+</div>
+</div>
+</section>
+
+<!-- PIPELINES -->
+<section class="section" id="pipelines">
+<div class="container">
+<h2>Combining Commands Using Pipelines</h2>
+<h3>Concepts</h3>
+<p>Pipelines chain commands together, creating powerful data processing workflows. Each command in the pipeline receives the output of the previous command as input.</p>
+<h4>Pipeline Patterns</h4>
+<h5>Filter &rarr; Transform &rarr; Sort &rarr; Count</h5>
+<pre><code># Count processes per user
+ps aux | awk '{print $1}' | sort | uniq -c | sort -rn
+
+# Find most common error types in logs
+journalctl --since "1 hour ago" | grep -i "error" | \
+  awk '{print $NF}' | sort | uniq -c | sort -rn</code></pre>
+
+<h5>Extract &rarr; Filter &rarr; Format</h5>
+<pre><code># List users with bash shell and their UIDs
+awk -F: '$7 ~ /bash/ {print $1, $3}' /etc/passwd | sort -k2 -n
+
+# Show disk usage sorted by size
+df -h | grep -v "tmpfs\|devtmpfs" | sort -k2 -h -r</code></pre>
+
+<h5>Search &rarr; Extract &rarr; Save</h5>
+<pre><code># Extract failed SSH IPs and save to file
+grep "Failed password" /var/log/secure | \
+  grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | \
+  sort -u | tee /tmp/failed_ips.txt | wc -l</code></pre>
+
+<h4>Complex Pipeline Example</h4>
+<pre><code># Generate system health report
+echo "=== System Health Report ===" | tee /tmp/health_report.txt
+echo "Date: $(date)" | tee -a /tmp/health_report.txt
+echo "" | tee -a /tmp/health_report.txt
+echo "--- Top Memory Consumers ---" | tee -a /tmp/health_report.txt
+ps aux --sort=-%mem | head -6 | tee -a /tmp/health_report.txt
+echo "" | tee -a /tmp/health_report.txt
+echo "--- Disk Usage ---" | tee -a /tmp/health_report.txt
+df -h | grep -v "tmpfs\|devtmpfs" | tee -a /tmp/health_report.txt
+echo "" | tee -a /tmp/health_report.txt
+echo "--- Recent Errors ---" | tee -a /tmp/health_report.txt
+journalctl -p err --since "1 hour ago" --no-pager | \
+  tail -10 | tee -a /tmp/health_report.txt</code></pre>
+<div class="explain-box">
+<strong>Why this works:</strong> Each command feeds into the next. tee saves intermediate results while allowing the pipeline to continue. The final report combines multiple data sources.
+</div>
+</div>
+</section>
+
+<!-- REAL WORLD EXAMPLES -->
+<section class="section" id="realworld">
+<div class="container">
+<h2>Real World Administration Examples</h2>
+
+<h3>Configuration File Analysis</h3>
+<div class="scenario-box">
+<h4>&#x1F3E2; Scenario: Audit /etc/fstab</h4>
+<pre><code># Show all non-comment, non-empty lines with line numbers
+grep -n -v '^#\|^$' /etc/fstab
+
+# Extract mount points
+awk -F' ' 'NF>=2 && !/^#/ && !/^$/ {print $2}' /etc/fstab
+
+# Extract filesystem types
+awk -F' ' 'NF>=3 && !/^#/ && !/^$/ {print $3}' /etc/fstab | sort | uniq -c
+
+# Check for dangerous mount options
+grep -E 'exec|suid|dev' /etc/fstab | grep -v 'noexec\|nosuid\|nodev'</code></pre>
+</div>
+
+<div class="scenario-box">
+<h4>&#x1F3E2; Scenario: Analyze /etc/passwd</h4>
+<pre><code># List all users with UID 0
+awk -F: '$3 == 0 {print $1}' /etc/passwd
+
+# Find users with login shells
+awk -F: '$7 !~ /nologin|false/ {print $1, $7}' /etc/passwd
+
+# Count users per shell
+awk -F: '{print $7}' /etc/passwd | sort | uniq -c | sort -rn
+
+# Find users created in last 30 days (by UID range)
+awk -F: '$3 >= 1000 && $3 < 65534 {print $1, $3, $6}' /etc/passwd</code></pre>
+</div>
+
+<div class="scenario-box">
+<h4>&#x1F3E2; Scenario: Apache/Nginx Log Analysis</h4>
+<pre><code># Count requests per IP
+awk '{print $1}' /var/log/httpd/access_log | sort | uniq -c | sort -rn | head -20
+
+# Find 404 errors
+grep '" 404 ' /var/log/httpd/access_log
+
+# Find most requested URLs
+awk '{print $7}' /var/log/httpd/access_log | sort | uniq -c | sort -rn | head -20
+
+# Count requests per hour
+awk '{print $4}' /var/log/httpd/access_log | cut -d: -f2 | sort | uniq -c
+
+# Find slow responses (>5 seconds)
+awk '{if ($NF > 5) print $0}' /var/log/httpd/access_log</code></pre>
+</div>
+
+<h3>System Health Monitoring</h3>
+<pre><code># Quick system overview
+echo "=== Quick System Overview ==="
+echo "Uptime: $(uptime)"
+echo "Load: $(cat /proc/loadavg)"
+echo ""
+echo "--- Memory ---"
+free -h
+echo ""
+echo "--- Top 5 CPU Processes ---"
+ps aux --sort=-%cpu | head -6
+echo ""
+echo "--- Top 5 Memory Processes ---"
+ps aux --sort=-%mem | head -6
+echo ""
+echo "--- Disk Usage ---"
+df -h | grep -v "tmpfs\|devtmpfs"
+echo ""
+echo "--- Failed Logins ---"
+grep -c "Failed" /var/log/secure 2>/dev/null || echo "0"
+echo ""
+echo "--- Listening Ports ---"
+ss -tlnp | grep LISTEN</code></pre>
+</div>
+</section>
+
+<!-- LOG ANALYSIS SCENARIOS -->
+<section class="section" id="loganalysis">
+<div class="container">
+<h2>Log Analysis Scenarios</h2>
+
+<h3>Scenario 1: SSH Brute Force Detection</h3>
+<pre><code># Find IPs with more than 10 failed attempts
+grep "Failed password" /var/log/secure | \
+  grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | \
+  sort | uniq -c | sort -rn | \
+  awk '$1 > 10 {print $2 " ("$1" attempts)"}'
+
+# Find targeted usernames
+grep "Failed password" /var/log/secure | \
+  grep -oE 'for [a-zA-Z0-9_]+' | \
+  awk '{print $2}' | sort | uniq -c | sort -rn</code></pre>
+
+<h3>Scenario 2: Service Failure Analysis</h3>
+<pre><code># Find services that failed to start
+journalctl --since "today" --no-pager | \
+  grep -E "Failed to start|failed" | \
+  awk '{for(i=1;i<=NF;i++) if($i ~ /\.service$/) print $i}' | \
+  sort | uniq -c | sort -rn
+
+# Find services restarted frequently
+journalctl --since "1 day ago" --no-pager | \
+  grep "Started\|Stopped" | \
+  grep -oE '[a-z]+\.service' | \
+  sort | uniq -c | sort -rn</code></pre>
+
+<h3>Scenario 3: Disk Space Investigation</h3>
+<pre><code># Find largest directories under /var
+du -sh /var/* 2>/dev/null | sort -rh | head -10
+
+# Find files larger than 100MB
+find / -type f -size +100M -exec ls -lh {} \; 2>/dev/null | \
+  awk '{print $5, $9}' | sort -rh
+
+# Check inode usage
+df -i | awk 'NR>1 {printf "%-20s %s/%s (%.1f%%)\n", $1, $3, $2, ($3/$2)*100}'</code></pre>
+
+<h3>Scenario 4: SELinux Denial Analysis</h3>
+<pre><code># Count SELinux denials by type
+sudo ausearch -m avc -ts today --summary 2>/dev/null | \
+  grep -E "type|denied" | head -20
+
+# Find most common denied operations
+sudo ausearch -m avc -ts today 2>/dev/null | \
+  grep -oE 'comm="[^"]+"' | sort | uniq -c | sort -rn
+
+# Find most common denied paths
+sudo ausearch -m avc -ts today 2>/dev/null | \
+  grep -oE 'path="[^"]+"' | sort | uniq -c | sort -rn</code></pre>
+</div>
+</section>
+
+<!-- TROUBLESHOOTING EXAMPLES -->
+<section class="section" id="troubleshoot">
+<div class="container">
+<h2>Troubleshooting Examples</h2>
+
+<h3>Problem: Service Won't Start</h3>
+<pre><code># Step 1: Check service status
+systemctl status httpd
+
+# Step 2: Check recent logs
+journalctl -u httpd --since "5 minutes ago" --no-pager
+
+# Step 3: Look for specific errors
+journalctl -u httpd --no-pager | grep -i "error\|failed\|denied"
+
+# Step 4: Check configuration syntax
+httpd -t 2>&1 | grep -v "Syntax OK"
+
+# Step 5: Check port conflicts
+ss -tlnp | grep :80
+
+# Step 6: Check SELinux denials
+sudo ausearch -m avc -ts recent | grep httpd</code></pre>
+
+<h3>Problem: High CPU Usage</h3>
+<pre><code># Step 1: Identify process
+ps aux --sort=-%cpu | head -10
+
+# Step 2: Get process details
+PID=$(ps aux --sort=-%cpu | awk 'NR==2 {print $2}')
+ps -f -p $PID
+
+# Step 3: Check process open files
+lsof -p $PID 2>/dev/null | head -20
+
+# Step 4: Check process children
+pstree -p $PID
+
+# Step 5: Monitor in real-time
+top -p $PID</code></pre>
+
+<h3>Problem: Disk Full</h3>
+<pre><code># Step 1: Check filesystem usage
+df -h
+
+# Step 2: Find large directories
+du -sh /var/* | sort -rh | head -10
+du -sh /home/* | sort -rh | head -10
+
+# Step 3: Find large files
+find / -xdev -type f -size +50M -exec ls -lh {} \; 2>/dev/null | \
+  sort -k5 -rh | head -20
+
+# Step 4: Check log files
+du -sh /var/log/* | sort -rh | head -10
+
+# Step 5: Check for deleted but still open files
+lsof +L1 2>/dev/null</code></pre>
+
+<h3>Problem: Network Connectivity Issue</h3>
+<pre><code># Step 1: Check interface status
+ip addr show
+ip link show
+
+# Step 2: Check routing
+ip route show
+
+# Step 3: Test DNS resolution
+nslookup example.com
+dig example.com
+
+# Step 4: Check firewall rules
+sudo firewall-cmd --list-all
+
+# Step 5: Check listening services
+ss -tlnp
+
+# Step 6: Check connection states
+ss -tnp state established</code></pre>
+</div>
+</section>
+
+<!-- VERIFICATION PROCEDURES -->
+<section class="section">
+<div class="container">
+<h2>Verification Procedures</h2>
+<h3>Verify Text Processing Skills</h3>
+<pre><code># Test grep with regex
+echo -e "error: disk full\nwarning: low memory\ninfo: started" | \
+  grep -E "error|warning"
+
+# Test sed substitution
+echo "hello world" | sed 's/hello/HELLO/g'
+
+# Test awk field extraction
+echo "root:x:0:0:root:/root:/bin/bash" | awk -F: '{print $1, $3, $7}'
+
+# Test cut field extraction
+echo "root:x:0:0:root:/root:/bin/bash" | cut -d: -f1,3,7
+
+# Test sort and uniq
+echo -e "apple\nbanana\napple\ncherry\nbanana\napple" | \
+  sort | uniq -c | sort -rn
+
+# Test tr character replacement
+echo "HELLO WORLD" | tr 'A-Z' 'a-z'
+
+# Test tee
+echo "test data" | tee /tmp/tee_test.txt | wc -c
+
+# Test pipeline
+echo -e "a:1\nb:2\nc:3\na:4" | cut -d: -f1 | sort | uniq -c</code></pre>
+
+<h3>Verify Log Analysis Skills</h3>
+<pre><code># Verify journal access
+journalctl --since "1 hour ago" --no-pager | wc -l
+
+# Verify grep on system files
+grep -c "root" /etc/passwd
+
+# Verify awk on system files
+awk -F: 'NR==1 {print $1}' /etc/passwd
+
+# Verify sort on process list
+ps aux | awk '{print $1}' | sort | uniq -c | sort -rn | head -5</code></pre>
+</div>
+</section>
+
+<!-- COMMON MISTAKES -->
+<section class="section">
+<div class="container">
+<h2>Common Mistakes</h2>
+
+<div class="warn-box">
+<h3>&#x26A0;&#xFE0F; grep Mistakes</h3>
+<ul>
+<li><strong>Forgetting quotes around patterns with spaces:</strong> <code>grep "error message"</code> not <code>grep error message</code></li>
+<li><strong>Using literal dots instead of regex dots:</strong> <code>\.</code> for literal dot, <code>.</code> for any character</li>
+<li><strong>Not using -E for alternation:</strong> <code>grep -E "a|b"</code> not <code>grep "a|b"</code></li>
+<li><strong>Case sensitivity:</strong> Always use <code>-i</code> when case does not matter</li>
+<li><strong>Recursive search without --include:</strong> Use <code>--include="*.log"</code> to limit file types</li>
+</ul>
+</div>
+
+<div class="warn-box">
+<h3>&#x26A0;&#xFE0F; sed Mistakes</h3>
+<ul>
+<li><strong>Forgetting /g flag:</strong> <code>s/old/new/</code> only replaces first occurrence per line</li>
+<li><strong>Using wrong delimiter:</strong> Use <code>s|old|new|</code> when pattern contains slashes</li>
+<li><strong>In-place editing without backup:</strong> Always use <code>-i.bak</code> for config files</li>
+<li><strong>Not escaping special characters:</strong> <code>\.</code>, <code>\*</code>, <code>\?</code> in patterns</li>
+</ul>
+</div>
+
+<div class="warn-box">
+<h3>&#x26A0;&#xFE0F; awk Mistakes</h3>
+<ul>
+<li><strong>Wrong field separator:</strong> Default is whitespace; use <code>-F:</code> for colon-separated</li>
+<li><strong>Confusing $0 with $1:</strong> <code>$0</code> is entire line, <code>$1</code> is first field</li>
+<li><strong>Forgetting quotes around patterns:</strong> <code>awk '/pattern/'</code> not <code>awk /pattern/</code></li>
+<li><strong>Not handling header lines:</strong> Use <code>NR==1 {next}</code> to skip headers</li>
+</ul>
+</div>
+
+<div class="warn-box">
+<h3>&#x26A0;&#xFE0F; Pipeline Mistakes</h3>
+<ul>
+<li><strong>uniq without sort:</strong> <code>sort | uniq</code> not just <code>uniq</code></li>
+<li><strong>Order matters:</strong> Filter before transform to reduce data early</li>
+<li><strong>Forgetting to handle stderr:</strong> Pipes only carry stdout; use <code>2>&1</code> for stderr</li>
+<li><strong>Over-piping:</strong> Sometimes a single awk command replaces 3 piped commands</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- RHCSA EXAM NOTES -->
+<section class="section">
+<div class="container">
+<h2>RHCSA Exam Notes</h2>
+<div class="exam-box">
+<h3>&#x1F3AF; Exam-Relevant Text Processing</h3>
+<ul>
+<li><strong>grep</strong> is explicitly tested &mdash; know <code>-i</code>, <code>-v</code>, <code>-c</code>, <code>-r</code>, <code>-n</code>, and basic regex</li>
+<li><strong>Regular expressions</strong> are tested &mdash; know anchors (<code>^</code>, <code>$</code>), wildcards (<code>.</code>, <code>*</code>), and character classes (<code>[]</code>)</li>
+<li><strong>Log analysis</strong> requires grep &mdash; expect tasks asking you to find specific entries in logs</li>
+<li><strong>Shell scripts</strong> may require text processing &mdash; know how to process command output in scripts</li>
+</ul>
+</div>
+<div class="tip-box">
+<h3>&#x1F4A1; Exam Strategy</h3>
+<ul>
+<li>Use <code>grep -i</code> for case-insensitive searches in logs</li>
+<li>Use <code>journalctl | grep</code> for systemd journal searches</li>
+<li>Use <code>awk -F:</code> for parsing /etc/passwd and /etc/group</li>
+<li>Use <code>sed 's/old/new/'</code> for quick config modifications</li>
+<li>Combine commands with pipes for efficient verification</li>
+<li>Use <code>tee</code> to save output while continuing to process it</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- PRACTICE EXERCISES -->
+<section class="section" id="practice">
+<div class="container">
+<h2>Practice Exercises</h2>
+
+<div class="collapsible">
+<button class="collapsible-btn" onclick="toggleCollapsible(this)">
+Exercise 1: grep and Regular Expressions <span class="arrow">&#x25BC;</span>
+</button>
+<div class="collapsible-content">
+<p><strong>Task:</strong> Use grep and regex to analyze /etc/passwd</p>
+<ol>
+<li>Find all users with UID less than 1000</li>
+<li>Count users who have /bin/bash as their shell</li>
+<li>Find all lines containing "root" (case-insensitive)</li>
+<li>Find users whose username starts with "s"</li>
+<li>Extract only the usernames from /etc/passwd</li>
+</ol>
+</div>
+</div>
+
+<div class="collapsible">
+<button class="collapsible-btn" onclick="toggleCollapsible(this)">
+Exercise 2: sed Text Transformation <span class="arrow">&#x25BC;</span>
+</button>
+<div class="collapsible-content">
+<p><strong>Task:</strong> Use sed to transform text</p>
+<ol>
+<li>Replace all occurrences of "error" with "ERROR" in a file</li>
+<li>Delete all comment lines (starting with #) from /etc/fstab</li>
+<li>Insert a line " # Modified by admin" after the first line of a config file</li>
+<li>Replace all IP addresses in a log file with "REDACTED"</li>
+<li>Remove all empty lines from a file</li>
+</ol>
+</div>
+</div>
+
+<div class="collapsible">
+<button class="collapsible-btn" onclick="toggleCollapsible(this)">
+Exercise 3: awk Data Extraction <span class="arrow">&#x25BC;</span>
+</button>
+<div class="collapsible-content">
+<p><strong>Task:</strong> Use awk to extract and format data</p>
+<ol>
+<li>Print username, UID, and home directory for all regular users (UID >= 1000)</li>
+<li>Count how many users have each type of shell</li>
+<li>Generate a report showing total number of users and system accounts</li>
+<li>Extract the GID from /etc/group for the "wheel" group</li>
+<li>Print all fields of /etc/passwd with their field numbers</li>
+</ol>
+</div>
+</div>
+
+<div class="collapsible">
+<button class="collapsible-btn" onclick="toggleCollapsible(this)">
+Exercise 4: Pipeline Construction <span class="arrow">&#x25BC;</span>
+</button>
+<div class="collapsible-content">
+<p><strong>Task:</strong> Build pipelines to analyze system data</p>
+<ol>
+<li>Create a pipeline that shows the top 5 users by number of processes</li>
+<li>Create a pipeline that counts the number of lines, words, and characters in /etc/passwd</li>
+<li>Create a pipeline that extracts unique filesystem types from df output</li>
+<li>Create a pipeline that shows disk usage sorted by size (largest first)</li>
+<li>Create a pipeline that finds the most common error type in journal logs</li>
+</ol>
+</div>
+</div>
+
+<div class="collapsible">
+<button class="collapsible-btn" onclick="toggleCollapsible(this)">
+Exercise 5: Log Analysis <span class="arrow">&#x25BC;</span>
+</button>
+<div class="collapsible-content">
+<p><strong>Task:</strong> Analyze system logs</p>
+<ol>
+<li>Count the number of failed SSH login attempts today</li>
+<li>Find all unique source IPs that attempted SSH login</li>
+<li>Find all services that have logged errors in the last hour</li>
+<li>Count the number of journal entries at warning level or higher</li>
+<li>Find the most recent successful SSH login</li>
+</ol>
+</div>
+</div>
+
+<div class="collapsible">
+<button class="collapsible-btn" onclick="toggleCollapsible(this)">
+Exercise 6: Advanced Text Processing <span class="arrow">&#x25BC;</span>
+</button>
+<div class="collapsible-content">
+<p><strong>Task:</strong> Combine multiple tools for complex analysis</p>
+<ol>
+<li>Generate a report showing each user's login shell and whether it is a login shell</li>
+<li>Find all configuration files in /etc/ that contain the word "password"</li>
+<li>Create a summary of all running services grouped by their state</li>
+<li>Extract and count all unique port numbers from ss output</li>
+<li>Generate a CSV report of disk usage with filesystem, size, used%, and mount point</li>
+</ol>
+</div>
+</div>
+</div>
+</section>
+
+<!-- SOLUTIONS -->
+<section class="section" id="solutions">
+<div class="container">
+<h2>Solutions</h2>
+
+<div class="collapsible">
+<button class="collapsible-btn" onclick="toggleCollapsible(this)">
+Solution 1: grep and Regular Expressions <span class="arrow">&#x25BC;</span>
+</button>
+<div class="collapsible-content">
+<pre><code># 1. Users with UID less than 1000 (awk is more precise)
+awk -F: '$3 < 1000 {print $0}' /etc/passwd
+
+# 2. Count users with /bin/bash shell
+grep -c "/bin/bash" /etc/passwd
+# Or with awk:
+awk -F: '$7 == "/bin/bash" {count++} END {print count}' /etc/passwd
+
+# 3. Find lines containing "root" (case-insensitive)
+grep -i "root" /etc/passwd
+
+# 4. Users whose username starts with "s"
+grep "^s" /etc/passwd
+# Or:
+awk -F: '$1 ~ /^s/ {print $1}' /etc/passwd
+
+# 5. Extract only usernames
+cut -d: -f1 /etc/passwd
+# Or:
+awk -F: '{print $1}' /etc/passwd</code></pre>
+</div>
+</div>
+
+<div class="collapsible">
+<button class="collapsible-btn" onclick="toggleCollapsible(this)">
+Solution 2: sed Text Transformation <span class="arrow">&#x25BC;</span>
+</button>
+<div class="collapsible-content">
+<pre><code># 1. Replace "error" with "ERROR" (case-insensitive)
+sed 's/error/ERROR/gi' file.txt
+
+# 2. Delete comment lines from /etc/fstab
+sed '/^#/d' /etc/fstab
+# Or show non-comment, non-empty lines:
+sed -e '/^#/d' -e '/^$/d' /etc/fstab
+
+# 3. Insert line after first line
+sed '1a\ # Modified by admin' config.conf
+
+# 4. Replace IP addresses with REDACTED
+sed 's/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/REDACTED/g' log.txt
+# Or with extended regex:
+sed -E 's/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/REDACTED/g' log.txt
+
+# 5. Remove empty lines
+sed '/^$/d' file.txt</code></pre>
+</div>
+</div>
+
+<div class="collapsible">
+<button class="collapsible-btn" onclick="toggleCollapsible(this)">
+Solution 3: awk Data Extraction <span class="arrow">&#x25BC;</span>
+</button>
+<div class="collapsible-content">
+<pre><code># 1. Username, UID, home for regular users
+awk -F: '$3 >= 1000 {print $1, $3, $6}' /etc/passwd
+
+# 2. Count users per shell type
+awk -F: '{shells[$7]++} END {for(s in shells) print shells[s], s}' /etc/passwd | sort -rn
+
+# 3. Report with totals
+awk -F: 'BEGIN {sys=0; reg=0}
+{if($3 < 1000) sys++; else reg++}
+END {print "System accounts: " sys; print "Regular users: " reg; print "Total: " NR}' /etc/passwd
+
+# 4. Extract GID for wheel group
+awk -F: '$1 == "wheel" {print $3}' /etc/group
+
+# 5. Print all fields with numbers
+awk -F: '{for(i=1;i<=NF;i++) print "Field "i": "$i}' /etc/passwd</code></pre>
+</div>
+</div>
+
+<div class="collapsible">
+<button class="collapsible-btn" onclick="toggleCollapsible(this)">
+Solution 4: Pipeline Construction <span class="arrow">&#x25BC;</span>
+</button>
+<div class="collapsible-content">
+<pre><code># 1. Top 5 users by process count
+ps aux | awk '{print $1}' | sort | uniq -c | sort -rn | head -5
+
+# 2. Count lines, words, characters in /etc/passwd
+wc /etc/passwd
+
+# 3. Unique filesystem types from df
+df -T | awk 'NR>1 {print $2}' | sort -u
+
+# 4. Disk usage sorted by size
+du -sh /* 2>/dev/null | sort -rh | head -10
+
+# 5. Most common error type in journal
+journalctl --since "1 hour ago" --no-pager | \
+  grep -i "error" | awk '{print $NF}' | sort | uniq -c | sort -rn | head -5</code></pre>
+</div>
+</div>
+
+<div class="collapsible">
+<button class="collapsible-btn" onclick="toggleCollapsible(this)">
+Solution 5: Log Analysis <span class="arrow">&#x25BC;</span>
+</button>
+<div class="collapsible-content">
+<pre><code># 1. Failed SSH attempts today
+grep -c "Failed password" /var/log/secure 2>/dev/null
+# Or with journalctl:
+journalctl -u sshd --since "today" --no-pager | grep -c "Failed"
+
+# 2. Unique source IPs for SSH
+grep "Failed password" /var/log/secure 2>/dev/null | \
+  grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | sort -u
+
+# 3. Services with errors in last hour
+journalctl --since "1 hour ago" --no-pager | \
+  grep -i "error" | grep -oE '[a-z]+\.service' | sort -u
+
+# 4. Warning level or higher entries
+journalctl -p warning --since "1 hour ago" --no-pager | wc -l
+
+# 5. Most recent successful SSH login
+grep "Accepted" /var/log/secure 2>/dev/null | tail -1
+# Or:
+journalctl -u sshd --no-pager | grep "Accepted" | tail -1</code></pre>
+</div>
+</div>
+
+<div class="collapsible">
+<button class="collapsible-btn" onclick="toggleCollapsible(this)">
+Solution 6: Advanced Text Processing <span class="arrow">&#x25BC;</span>
+</button>
+<div class="collapsible-content">
+<pre><code># 1. User shell report with login status
+awk -F: '{
+  shell = $7
+  login = (shell ~ /nologin|false/) ? "NO" : "YES"
+  printf "%-15s %-20s %s\n", $1, shell, login
+}' /etc/passwd
+
+# 2. Config files containing "password"
+grep -ri "password" /etc/ --include="*.conf" --include="*.cfg" -l 2>/dev/null
+
+# 3. Running services by state
+systemctl list-units --type=service --no-pager | \
+  grep "service$" | awk '{print $3}' | sort | uniq -c | sort -rn
+
+# 4. Unique port numbers from ss
+ss -tlnp | awk 'NR>1 {split($4,a,":"); print a[length(a)]}' | sort -un
+
+# 5. CSV disk usage report
+df -h | awk 'NR==1 {print "Filesystem,Size,Used%,Mount"}
+NR>1 && !/tmpfs/ && !/devtmpfs/ {
+  gsub(/%/,"",$5)
+  printf "%s,%s,%s%%,%s\n", $1, $2, $5, $6
+}'</code></pre>
+</div>
+</div>
+</div>
+</section>
+
+<!-- CHAPTER SUMMARY -->
+<section class="section">
+<div class="container">
+<h2>Chapter Summary</h2>
+<div class="obj-box">
+<h3>Key Takeaways</h3>
+<ul>
+<li><strong>grep</strong> is your primary tool for searching text &mdash; master <code>-i</code>, <code>-v</code>, <code>-c</code>, <code>-n</code>, <code>-r</code>, <code>-E</code></li>
+<li><strong>Regular expressions</strong> are powerful &mdash; know anchors (<code>^</code>, <code>$</code>), wildcards (<code>.</code>, <code>*</code>), quantifiers (<code>+</code>, <code>?</code>, <code>{n}</code>), and character classes (<code>[]</code>)</li>
+<li><strong>sed</strong> excels at find-and-replace &mdash; use <code>s/old/new/g</code> for substitutions, always backup with <code>-i.bak</code></li>
+<li><strong>awk</strong> is ideal for field-based processing &mdash; use <code>-F:</code> for colon-separated files like /etc/passwd</li>
+<li><strong>cut</strong> is simple and fast for column extraction &mdash; use <code>-d: -f1,3</code> for specific fields</li>
+<li><strong>sort | uniq -c</strong> is the pattern for counting occurrences</li>
+<li><strong>tr</strong> transforms individual characters &mdash; use for case conversion and character deletion</li>
+<li><strong>tee</strong> splits streams &mdash; save output while continuing the pipeline</li>
+<li><strong>Pipelines</strong> combine tools &mdash; filter early, transform once, sort at the end</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- QUICK REFERENCE CHEAT SHEET -->
+<section class="section" id="cheatsheet">
+<div class="container">
+<h2>Quick Reference Cheat Sheet</h2>
+
+<div class="qref">
+<h4>&#x1F4CB; grep Quick Reference</h4>
+<pre><code>grep "pattern" file              # Search for pattern
+grep -i "pattern" file           # Case-insensitive
+grep -v "pattern" file           # Invert match
+grep -c "pattern" file           # Count matches
+grep -n "pattern" file           # Show line numbers
+grep -r "pattern" /dir/          # Recursive search
+grep -E "pat1|pat2" file         # Extended regex (OR)
+grep -w "word" file              # Whole word match
+grep -A 3 "pattern" file         # Show 3 lines after
+grep -B 3 "pattern" file         # Show 3 lines before
+grep -C 3 "pattern" file         # Show 3 lines context
+grep -o "pattern" file           # Output only match
+grep -Eo '[0-9]+' file           # Extract numbers</code></pre>
+</div>
+
+<div class="qref">
+<h4>&#x1F4CB; Regular Expression Quick Reference</h4>
+<pre><code># Basic Regex (BRE) - grep
+.          Any single character
+^          Start of line
+$          End of line
+*          Zero or more of previous
+\+         One or more (escaped)
+\?         Zero or one (escaped)
+[abc]      Character class
+[^abc]     Negated class
+{n}        Exactly n repetitions (escaped: \{n\})
+{n,m}      n to m repetitions (escaped: \{n,m\})
+(ab)       Grouping (escaped: \(ab\))
+
+# Extended Regex (ERE) - grep -E
+.          Any single character
+^          Start of line
+$          End of line
+*          Zero or more
++          One or more
+?          Zero or one
+{n}        Exactly n repetitions
+{n,m}      n to m repetitions
+|          Alternation (OR)
+()         Grouping
+[]         Character class
+
+# POSIX Character Classes
+[[:alpha:]]   Letters
+[[:digit:]]   Digits
+[[:alnum:]]   Alphanumeric
+[[:space:]]   Whitespace
+[[:print:]]   Printable characters</code></pre>
+</div>
+
+<div class="qref">
+<h4>&#x1F4CB; sed Quick Reference</h4>
+<pre><code>sed 's/old/new/' file            # Replace first per line
+sed 's/old/new/g' file           # Replace all per line
+sed -i.bak 's/old/new/g' file    # In-place with backup
+sed -n '5p' file                 # Print line 5
+sed -n '/pattern/p' file         # Print matching lines
+sed '/pattern/d' file            # Delete matching lines
+sed '/^$/d' file                 # Delete empty lines
+sed '/^#/d' file                 # Delete comments
+sed '1a\text' file               # Append after line 1
+sed '1i\text' file               # Insert before line 1
+sed -e 's/a/b/' -e 's/c/d/' f    # Multiple commands</code></pre>
+</div>
+
+<div class="qref">
+<h4>&#x1F4CB; awk Quick Reference</h4>
+<pre><code>awk '{print $1}' file            # Print first field
+awk -F: '{print $1}' file        # Colon separator
+awk -F: '$3 >= 1000' file        # Filter by field value
+awk 'NR==1 {next}' file          # Skip first line
+awk 'END {print NR}' file        # Print total lines
+awk '{sum+=$1} END {print sum}'  # Sum first field
+awk -v x=5 '$3 > x' file         # External variable
+awk '/pattern/ {print $1}' file  # Pattern match
+awk 'BEGIN {...} {...} END {...}' # Full program</code></pre>
+</div>
+
+<div class="qref">
+<h4>&#x1F4CB; cut, sort, uniq, tr, tee Quick Reference</h4>
+<pre><code># cut
+cut -d: -f1 file                # Field 1 (colon delim)
+cut -d: -f1,3,5 file            # Fields 1,3,5
+cut -c1-10 file                 # Characters 1-10
+
+# sort
+sort file                       # Alphabetical sort
+sort -n file                    # Numeric sort
+sort -rn file                   # Reverse numeric
+sort -t: -k3 -n file            # Sort by field 3
+sort -u file                    # Unique only
+sort -h file                    # Human-readable
+
+# uniq (always sort first!)
+sort file | uniq                # Remove duplicates
+sort file | uniq -c             # Count occurrences
+sort file | uniq -d             # Show duplicates only
+sort file | uniq -u             # Show unique only
+
+# tr
+echo "HELLO" | tr 'A-Z' 'a-z'   # Lowercase
+echo "text" | tr -d '0-9'       # Delete digits
+echo "text" | tr -s ' '         # Squeeze spaces
+
+# tee
+command | tee file.txt          # Save and display
+command | tee -a file.txt       # Append and display
+command | tee f1.txt f2.txt     # Save to multiple files</code></pre>
+</div>
+
+<div class="qref">
+<h4>&#x1F4CB; Common Pipeline Patterns</h4>
+<pre><code># Count occurrences of anything
+command | sort | uniq -c | sort -rn
+
+# Extract, filter, count
+command | grep "pattern" | cut -d: -f1 | sort | uniq -c
+
+# Extract IPs from logs
+grep "pattern" logfile | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | sort | uniq -c
+
+# Top N by field
+ps aux | awk '{print $1}' | sort | uniq -c | sort -rn | head -10
+
+# Save and continue pipeline
+command | tee /tmp/debug.txt | grep "pattern" | wc -l</code></pre>
+</div>
+</div>
+</section>
+
+<script>
+function toggleTheme(){const b=document.body,d=b.getAttribute("data-theme");if(d==="dark"){b.setAttribute("data-theme","light");localStorage.setItem("theme","light")}else{b.setAttribute("data-theme","dark");localStorage.setItem("theme","dark")}}
+(function(){const s=localStorage.getItem("theme");if(s)document.body.setAttribute("data-theme",s);else if(window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches)document.body.setAttribute("data-theme","dark")})();
+function toggleCollapsible(btn){btn.classList.toggle("active");const content=btn.nextElementSibling;content.classList.toggle("open")}
+document.querySelectorAll("pre").forEach(function(pre){const btn=document.createElement("button");btn.className="copy-btn";btn.textContent="Copy";btn.addEventListener("click",function(){const code=pre.querySelector("code")||pre;const text=code.innerText;navigator.clipboard.writeText(text).then(function(){btn.textContent="Copied!";setTimeout(function(){btn.textContent="Copy"},2000)}).catch(function(){btn.textContent="Error"})});pre.appendChild(btn)});
+</script>
+</body>
+</html>
