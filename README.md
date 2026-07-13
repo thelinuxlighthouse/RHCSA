@@ -48,3 +48,9 @@ If you have suggestions, improvements, or additional resources, feel free to ope
 📌 Happy Learning & Good Luck with Your RHCSA Exam!
 
 Let me know if you need any changes! 🚀
+
+## 📜 License
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+*Disclaimer: This repository is for educational purposes only and is not affiliated with or endorsed by Red Hat.*
